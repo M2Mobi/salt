@@ -1901,7 +1901,10 @@ def _mariadb_user_chpass(
     args["host"] = host
 
     if salt.utils.versions.version_cmp(server_version, compare_version) >= 0:
-        qry = "ALTER USER %(user)s@%(host)s IDENTIFIED BY %(password)s;"
+        if password_hash is not None:
+            qry = "ALTER USER %(user)s@%(host)s IDENTIFIED BY PASSWORD %(password)s;"
+        else:
+            qry = "ALTER USER %(user)s@%(host)s IDENTIFIED BY %(password)s;"
     else:
         qry = (
             "UPDATE mysql.user SET "
